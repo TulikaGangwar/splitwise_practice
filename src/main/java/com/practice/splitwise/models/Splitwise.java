@@ -33,34 +33,45 @@ public class Splitwise {
         Map<User, Double> addedAmount = splitwiseService.split(user, amount, noOfUsers, friends, "EQUAL");
         Map<User, Double> selfRecord = splitTable.get(user);
         for(User friend : friends){
-            Map<User, Double> record = splitTable.get(friend);
             Double remainingOwed = 0D;
-            double result = 0;
+            Double result = 0D;
             if(selfRecord.containsKey(friend)) {
                 result = splitwiseService.checkOwedMoney(addedAmount.get(friend), selfRecord, friend, remainingOwed);
-                if(result>0){
-                    selfRecord.put(friend, result);
-                    splitTable.put(user, selfRecord);
-                }
-                else if(result<0){
-                    selfRecord.remove(friend);
-                    selfRecord.put(user, result * -1);
-                    splitTable.put(friend, selfRecord);
-                    splitTable.put(user, selfRecord);
-                }
-                else{
-                    selfRecord.remove(friend);
-                    splitTable.put(user, selfRecord);
-                }
+                splitOwedMoneyToAccounts(selfRecord, result, friend, user);
             }
             else {
-                if(splitTable.get(friend).containsKey(user)){
-                    splitTable.get(friend).put(user, splitTable.get(friend).get(user) + addedAmount.get(friend));
-                }
-                else {
-                    splitTable.get(friend).put(user, addedAmount.get(friend));
-                }
+                result = addedAmount.get(friend);
+                splitMoneyToNewAccounts( result, friend, user);
             }
+        }
+    }
+
+
+    public void splitOwedMoneyToAccounts(Map<User, Double> selfRecord, double result, User friend,User user){
+        if(result>0){
+            selfRecord.put(friend, result);
+            splitTable.put(user, selfRecord);
+        }
+        else if(result<0){
+            selfRecord.remove(friend);
+            splitTable.put(user, selfRecord);
+            Map<User, Double> friendRecord = splitTable.get(friend);
+            friendRecord.put(user, result*-1);
+            splitTable.put(friend, friendRecord);
+
+        }
+        else{
+            selfRecord.remove(friend);
+            splitTable.put(user, selfRecord);
+        }
+    }
+
+    public void splitMoneyToNewAccounts(double result , User friend, User user) {
+        if(splitTable.get(friend).containsKey(user)){
+            splitTable.get(friend).put(user, splitTable.get(friend).get(user) + result);
+        }
+        else {
+            splitTable.get(friend).put(user, result);
         }
     }
 }
