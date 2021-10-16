@@ -35,23 +35,22 @@ public class Splitwise {
         for(User friend : friends){
             Map<User, Double> record = splitTable.get(friend);
             Double remainingOwed = 0D;
-            int result = splitwiseService.checkOwedMoney(addedAmount.get(friend), selfRecord, friend, remainingOwed);
-            if(result==1){
-                if(remainingOwed == 0){
+            double result = 0;
+            if(selfRecord.containsKey(friend)) {
+                result = splitwiseService.checkOwedMoney(addedAmount.get(friend), selfRecord, friend, remainingOwed);
+                if(result>0){
+                    selfRecord.put(friend, result);
+                    splitTable.put(user, selfRecord);
+                }
+                else if(result<0){
                     selfRecord.remove(friend);
+                    selfRecord.put(user, result * -1);
+                    splitTable.put(friend, selfRecord);
                     splitTable.put(user, selfRecord);
                 }
                 else{
-                    selfRecord.put(friend, remainingOwed);
+                    selfRecord.remove(friend);
                     splitTable.put(user, selfRecord);
-                }
-            }
-            else if(result==-1) {
-                if(remainingOwed!=0){
-                    splitTable.get(friend).put(user, remainingOwed);
-                }
-                else {
-                    splitTable.get(friend).remove(user);
                 }
             }
             else {

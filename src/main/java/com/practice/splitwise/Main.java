@@ -58,19 +58,18 @@ public class Main {
                 User user = convertToUserType(splitwise,scanner.next());
 
                 splitwise.createEqualExpense(user, amount, noOfUsers, userFriends);
-                for (Map.Entry<User, Map<User, Double>> entry : splitwise.getSplitTable().entrySet()) {
-                    System.out.println(entry.getKey().getName() + " owes");
 
+                for (Map.Entry<User, Map<User, Double>> entry : splitwise.getSplitTable().entrySet()) {
                     for(Map.Entry<User, Double> entry1 : entry.getValue().entrySet()){
-                        System.out.println(entry1.getKey().getName()+" "+entry1.getValue());
+                        if(entry1.getValue()>0) {
+                            System.out.print(entry.getKey().getName() + " owes ");
+                            System.out.println(entry1.getKey().getName() + " " + entry1.getValue());
+                        }
                     }
                 }
-
                 break;
-
         }
     }
-
 
     public static List<User> convertToUserType(Splitwise splitwise, List<String> friends){
         List<User> userFriends = new ArrayList<>();

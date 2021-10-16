@@ -20,18 +20,12 @@ public class SplitwiseService {
         return map;
     }
 
-    public int checkOwedMoney(double addMoney, Map<User, Double> selfRecord, User friend, double remainingOwedAmount ){
+    public double checkOwedMoney(double addMoney, Map<User, Double> selfRecord, User friend, double remainingOwedAmount ){
         double alreadyOwedAmount = 0D;
-        if(selfRecord.containsKey(friend)){
+            alreadyOwedAmount = selfRecord.get(friend);
             remainingOwedAmount = alreadyOwedAmount - addMoney;
-            if(remainingOwedAmount>0){
-                return 1;
-            }
-            else{
-                return -1;
-            }
-        }
-        return 0;
+            return remainingOwedAmount;
+
     }
 
 }
