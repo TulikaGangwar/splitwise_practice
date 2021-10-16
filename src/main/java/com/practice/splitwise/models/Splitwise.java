@@ -42,6 +42,7 @@ public class Splitwise {
             else {
                 result = addedAmount.get(friend);
                 splitMoneyToNewAccounts( result, friend, user);
+
             }
         }
     }
